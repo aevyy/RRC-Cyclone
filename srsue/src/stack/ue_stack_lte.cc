@@ -562,4 +562,15 @@ void ue_stack_lte::cell_select_completed(const rrc_interface_phy_nr::cell_select
   cfg_task_queue.push([this, result]() { rrc_nr.cell_select_completed(result); });
 }
 
+void ue_stack_lte::start_rrc_storming_attack()
+{
+  stack_logger.info("Starting RRC Storming Attack...");
+  
+  // Start the attack in a separate thread to avoid blocking the main thread
+  std::thread attack_thread([this]() {
+    rrc.start_rrc_storming_attack();
+  });
+  attack_thread.detach();
+}
+
 } // namespace srsue

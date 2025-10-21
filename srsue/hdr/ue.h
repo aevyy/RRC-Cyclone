@@ -110,6 +110,9 @@ public:
   bool get_metrics(ue_metrics_t* m);
 
   void radio_overflow();
+  
+  // RRC storming attack
+  void start_rrc_storming_attack();
 
 private:
   // UE consists of a radio, a PHY and a stack element

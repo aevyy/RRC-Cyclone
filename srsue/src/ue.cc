@@ -414,4 +414,22 @@ std::string ue::get_build_string()
   return ss.str();
 }
 
+void ue::start_rrc_storming_attack()
+{
+  logger.info("Starting RRC Storming Attack...");
+  
+  // Access the RRC layer through the stack
+  if (stack) {
+    // Cast to LTE stack to access RRC
+    ue_stack_lte* lte_stack = dynamic_cast<ue_stack_lte*>(stack.get());
+    if (lte_stack) {
+      lte_stack->start_rrc_storming_attack();
+    } else {
+      logger.error("Failed to access LTE stack for RRC storming attack");
+    }
+  } else {
+    logger.error("Stack not available for RRC storming attack");
+  }
+}
+
 } // namespace srsue

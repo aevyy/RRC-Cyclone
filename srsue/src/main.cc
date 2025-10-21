@@ -666,8 +666,9 @@ static int parse_args(all_args_t* args, int argc, char* argv[])
   return SRSRAN_SUCCESS;
 }
 
-static void* input_loop(void*)
+static void* input_loop(void* ue_ptr)
 {
+  srsue::ue* ue = static_cast<srsue::ue*>(ue_ptr);
   string key;
   while (running) {
     getline(cin, key);
@@ -688,6 +689,14 @@ static void* input_loop(void*)
       } else if (key == "rlf") {
         simulate_rlf.store(true, std::memory_order_relaxed);
         cout << "Sending Radio Link Failure" << endl;
+      } else if (key == "fd") {
+        // Trigger RRC storming attack
+        cout << "Starting RRC Storming Attack..." << endl;
+        if (ue) {
+          ue->start_rrc_storming_attack();
+        } else {
+          cout << "UE not available for RRC storming attack" << endl;
+        }
       } else if (key == "flush") {
         srslog::flush();
         cout << "Flushed log file buffers" << endl;
@@ -802,7 +811,7 @@ int main(int argc, char* argv[])
   }
 
   pthread_t input;
-  pthread_create(&input, nullptr, &input_loop, &args);
+  pthread_create(&input, nullptr, &input_loop, &ue);
 
   cout << "Attaching UE..." << endl;
   ue.switch_on();
