@@ -1,0 +1,544 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "srsgnb/src/stack/rrc/test/rrc_nr_core_test"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"srsgnb/src/stack/rrc/test/CMakeLists.txt",
+			"srsenb/test/rrc/CMakeLists.txt",
+			"srsgnb/src/stack/mac/CMakeLists.txt",
+			"lib/src/asn1/CMakeLists.txt",
+			"srsgnb/src/stack/rrc/CMakeLists.txt",
+			"lib/src/phy/CMakeLists.txt",
+			"lib/src/common/CMakeLists.txt",
+			"lib/src/gtpu/CMakeLists.txt",
+			"CMakeLists.txt",
+			"srsgnb/src/stack/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 27,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 28,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 22,
+				"parent" : 3
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 41,
+				"parent" : 5
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 69,
+				"parent" : 7
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 23,
+				"parent" : 9
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 61,
+				"parent" : 11
+			},
+			{
+				"file" : 6
+			},
+			{
+				"command" : 1,
+				"file" : 6,
+				"line" : 63,
+				"parent" : 13
+			},
+			{
+				"file" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 7,
+				"line" : 24,
+				"parent" : 15
+			},
+			{
+				"file" : 8
+			},
+			{
+				"command" : 2,
+				"file" : 8,
+				"line" : 133,
+				"parent" : 17
+			},
+			{
+				"command" : 2,
+				"file" : 8,
+				"line" : 257,
+				"parent" : 17
+			},
+			{
+				"command" : 2,
+				"file" : 8,
+				"line" : 321,
+				"parent" : 17
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 648,
+				"parent" : 17
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 649,
+				"parent" : 17
+			},
+			{
+				"file" : 9
+			},
+			{
+				"command" : 3,
+				"file" : 9,
+				"line" : 21,
+				"parent" : 23
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-Wno-error=template-id-cdtor -Wall -Wno-comment -Wno-reorder -Wno-unused-variable -Wtype-limits -std=c++14 -fno-strict-aliasing -Wno-unused-but-set-variable -march=native -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE -fvisibility=hidden -O3 -fno-trapping-math -fno-math-errno -DBUILD_TYPE_RELEASE -Wno-maybe-uninitialized -O3 -DNDEBUG -fPIE"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 18,
+					"define" : "ASSERTS_ENABLED"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "BOOST_PROGRAM_OPTIONS_DYN_LINK"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "BOOST_PROGRAM_OPTIONS_NO_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "BOOST_SYSTEM_DYN_LINK"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "BOOST_SYSTEM_NO_LIB"
+				},
+				{
+					"backtrace" : 19,
+					"define" : "ENABLE_TIMEPROF"
+				},
+				{
+					"backtrace" : 20,
+					"define" : "HAVE_BACKWARD"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 21,
+					"path" : "/home/avi/wireless/srsran_4g/build/lib/include"
+				},
+				{
+					"backtrace" : 22,
+					"path" : "/home/avi/wireless/srsran_4g/lib/include"
+				},
+				{
+					"backtrace" : 24,
+					"path" : "/home/avi/wireless/srsran_4g"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/avi/wireless/srsran_4g/cmake/modules"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "srsran_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "asn1_utils::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "rrc_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "s1ap_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "rrc_nr_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "ngap_nr_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsran_common::@7806e941b10f07a3cdfe"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsran_mac::@d99b061c8453fcf8555b"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsran_phy::@ff75a69bd6f9fa6d3921"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsran_gtpu::@fa6146c716af10669e3d"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srslog::@ad47f0aceb6ab6835148"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "support::@eee3a3e78be170f850bb"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "enb_cfg_parser::@63b29609aa928c190691"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsenb_common::@da81e54f9169189dcff2"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsenb_mac_common::@cb4294506ec791875009"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsenb_rrc::@80016dbf70a0411f7d1d"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsenb_upper::@3ae1027e3878df0c5632"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "test_helpers::@463692c9272cd8a1e9b8"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsgnb_mac::@29ac313522c267309394"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsgnb_ngap::@da3aba5570ab0c1d2255"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsgnb_rrc_config_utils::@f5e0d43930f46318bbef"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsgnb_rrc::@f5e0d43930f46318bbef"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "rrc_nr_test_helpers::@550ffa32061954868a8f"
+		}
+	],
+	"id" : "rrc_nr_core_test::@550ffa32061954868a8f",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wno-error=template-id-cdtor -Wall -Wno-comment -Wno-reorder -Wno-unused-variable -Wtype-limits -std=c++14 -fno-strict-aliasing -Wno-unused-but-set-variable -march=native -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE -fvisibility=hidden -O3 -fno-trapping-math -fno-math-errno -DBUILD_TYPE_RELEASE -Wno-maybe-uninitialized -O3 -DNDEBUG",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../libsrsgnb_rrc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../libsrsgnb_rrc_config_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/common/libsrsran_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/asn1/librrc_nr_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../srsenb/test/rrc/libtest_helpers.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "librrc_nr_test_helpers.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../mac/libsrsgnb_mac.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../ngap/libsrsgnb_ngap.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/asn1/libngap_nr_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/gtpu/libsrsran_gtpu.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../srsenb/src/stack/upper/libsrsenb_upper.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/usr/lib64/libsctp.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/usr/lib64/libboost_program_options.so.1.83.0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/usr/lib64/libboost_system.so.1.83.0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "../../../../../srsenb/src/stack/rrc/libsrsenb_rrc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "../../../../../srsenb/src/common/libsrsenb_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "../../../../../lib/src/asn1/librrc_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "../../../../../lib/src/asn1/libs1ap_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "../../../../../srsenb/src/libenb_cfg_parser.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../libsrsgnb_rrc_config_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/usr/lib64/libconfig++.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/asn1/librrc_nr_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "../../../../../srsenb/src/stack/mac/common/libsrsenb_mac_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "../../../../../lib/src/mac/libsrsran_mac.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 8,
+				"fragment" : "../../../../../lib/src/asn1/libasn1_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/gtpu/libsrsran_gtpu.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../../../lib/src/common/libsrsran_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "../../../../../lib/src/phy/libsrsran_phy.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "-lpthread",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "-lm",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "/usr/lib64/libfftw3f.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "../../../../../lib/src/support/libsupport.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "../../../../../lib/src/srslog/libsrslog.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "/lib64/libmbedcrypto.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "/usr/lib64/libdw.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/usr/lib64/libsctp.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 16,
+				"fragment" : "../../../../../lib/src/asn1/libsrsran_asn1.a",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "rrc_nr_core_test",
+	"nameOnDisk" : "rrc_nr_core_test",
+	"paths" : 
+	{
+		"build" : "srsgnb/src/stack/rrc/test",
+		"source" : "srsgnb/src/stack/rrc/test"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsgnb/src/stack/rrc/test/rrc_nr_core_test.cc",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

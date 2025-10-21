@@ -1,0 +1,654 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "srsue/src/srsue"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"install",
+			"target_link_libraries",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"srsue/src/CMakeLists.txt",
+			"srsue/src/stack/upper/CMakeLists.txt",
+			"srsue/src/stack/mac/CMakeLists.txt",
+			"lib/src/radio/CMakeLists.txt",
+			"lib/src/phy/rf/CMakeLists.txt",
+			"lib/src/asn1/CMakeLists.txt",
+			"lib/src/phy/CMakeLists.txt",
+			"lib/src/common/CMakeLists.txt",
+			"CMakeLists.txt",
+			"srsue/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 34,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 79,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 42,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 32,
+				"parent" : 4
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 25,
+				"parent" : 6
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 23,
+				"parent" : 8
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 2,
+				"file" : 4,
+				"line" : 140,
+				"parent" : 10
+			},
+			{
+				"command" : 2,
+				"file" : 4,
+				"line" : 161,
+				"parent" : 10
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 30,
+				"parent" : 4
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 5,
+				"line" : 56,
+				"parent" : 14
+			},
+			{
+				"file" : 6
+			},
+			{
+				"command" : 2,
+				"file" : 6,
+				"line" : 61,
+				"parent" : 16
+			},
+			{
+				"file" : 7
+			},
+			{
+				"command" : 2,
+				"file" : 7,
+				"line" : 63,
+				"parent" : 18
+			},
+			{
+				"file" : 8
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 133,
+				"parent" : 20
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 257,
+				"parent" : 20
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 321,
+				"parent" : 20
+			},
+			{
+				"command" : 4,
+				"file" : 8,
+				"line" : 648,
+				"parent" : 20
+			},
+			{
+				"command" : 4,
+				"file" : 8,
+				"line" : 649,
+				"parent" : 20
+			},
+			{
+				"file" : 9
+			},
+			{
+				"command" : 4,
+				"file" : 9,
+				"line" : 31,
+				"parent" : 26
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-Wno-error=template-id-cdtor -Wall -Wno-comment -Wno-reorder -Wno-unused-variable -Wtype-limits -std=c++14 -fno-strict-aliasing -Wno-unused-but-set-variable -march=native -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE -fvisibility=hidden -O3 -fno-trapping-math -fno-math-errno -DBUILD_TYPE_RELEASE -Wno-maybe-uninitialized -O3 -DNDEBUG -fPIE"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 21,
+					"define" : "ASSERTS_ENABLED"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "BOOST_PROGRAM_OPTIONS_DYN_LINK"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "BOOST_PROGRAM_OPTIONS_NO_LIB"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "BOOST_SYSTEM_DYN_LINK"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "BOOST_SYSTEM_NO_LIB"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "ENABLE_TIMEPROF"
+				},
+				{
+					"backtrace" : 23,
+					"define" : "HAVE_BACKWARD"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 24,
+					"path" : "/home/avi/wireless/srsran_4g/build/lib/include"
+				},
+				{
+					"backtrace" : 25,
+					"path" : "/home/avi/wireless/srsran_4g/lib/include"
+				},
+				{
+					"backtrace" : 27,
+					"path" : "/home/avi/wireless/srsran_4g"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/home/avi/wireless/srsran_4g/cmake/modules"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "srsran_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "asn1_utils::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "rrc_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "rrc_nr_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "ngap_nr_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "nas_5g_msg::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_common::@7806e941b10f07a3cdfe"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_mac::@d99b061c8453fcf8555b"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_phy::@ff75a69bd6f9fa6d3921"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_rf_utils::@027f138477c61cd56dba"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_rf::@027f138477c61cd56dba"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_radio::@3e8c5c7e04fd77711b05"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_rlc::@d0ba2fa1ef29608eea77"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_pdcp::@7759f0a017a80e028157"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsran_gtpu::@fa6146c716af10669e3d"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srslog::@ad47f0aceb6ab6835148"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "support::@eee3a3e78be170f850bb"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "system::@1de44c9092cd883f9c78"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_phy::@93da7d92d7d27749d7a2"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_stack::@e5b00784183fdd3fcf2e"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_nr_stack::@e5b00784183fdd3fcf2e"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_mac_common::@f9e87dcec00d33202ebc"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_mac::@d3a47420339069807ceb"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_mac_nr::@a0416aad115a2c89e422"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_rrc::@91c4f4139b41bca35b13"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_rrc_nr::@7bf172a6f64a7bd22029"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "srsue_upper::@e736b7193ba13529aab0"
+		}
+	],
+	"id" : "srsue::@165c28f350127d2d832b",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 2,
+				"path" : "bin"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/usr/local"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wno-error=template-id-cdtor -Wall -Wno-comment -Wno-reorder -Wno-unused-variable -Wtype-limits -std=c++14 -fno-strict-aliasing -Wno-unused-but-set-variable -march=native -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE -fvisibility=hidden -O3 -fno-trapping-math -fno-math-errno -DBUILD_TYPE_RELEASE -Wno-maybe-uninitialized -O3 -DNDEBUG",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/home/avi/wireless/srsran_4g/build/lib/src/phy/rf:",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "phy/libsrsue_phy.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/libsrsue_stack.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/upper/libsrsue_upper.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/mac/libsrsue_mac.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/rrc/libsrsue_rrc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/srslog/libsrslog.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/system/libsystem.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/libsrsue_nr_stack.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/rrc_nr/libsrsue_rrc_nr.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "stack/mac_nr/libsrsue_mac_nr.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/common/libsrsran_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/mac/libsrsran_mac.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/phy/libsrsran_phy.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/radio/libsrsran_radio.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/gtpu/libsrsran_gtpu.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/rlc/libsrsran_rlc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/pdcp/libsrsran_pdcp.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/asn1/librrc_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/srslog/libsrslog.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/support/libsupport.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/system/libsystem.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/asn1/librrc_nr_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/asn1/libngap_nr_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/usr/lib64/libboost_program_options.so.1.83.0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/usr/lib64/libboost_system.so.1.83.0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "../../lib/src/asn1/libnas_5g_msg.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "stack/mac_common/libsrsue_mac_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "../../lib/src/phy/rf/libsrsran_rf.so.23.04.0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-ldl",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "../../lib/src/phy/rf/libsrsran_rf_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "../../lib/src/asn1/libsrsran_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 15,
+				"fragment" : "../../lib/src/asn1/libasn1_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/common/libsrsran_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/srslog/libsrslog.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/phy/libsrsran_phy.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 17,
+				"fragment" : "-lpthread",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 17,
+				"fragment" : "-lm",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 17,
+				"fragment" : "/usr/lib64/libfftw3f.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../lib/src/support/libsupport.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 19,
+				"fragment" : "/lib64/libmbedcrypto.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 19,
+				"fragment" : "/usr/lib64/libdw.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 19,
+				"fragment" : "/usr/lib64/libsctp.so",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "srsue",
+	"nameOnDisk" : "srsue",
+	"paths" : 
+	{
+		"build" : "srsue/src",
+		"source" : "srsue/src"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsue/src/main.cc",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsue/src/ue.cc",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsue/src/metrics_stdout.cc",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsue/src/metrics_csv.cc",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsue/src/metrics_json.cc",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

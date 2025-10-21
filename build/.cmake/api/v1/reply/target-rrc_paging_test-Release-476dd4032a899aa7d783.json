@@ -1,0 +1,388 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "srsenb/test/rrc/rrc_paging_test"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"srsenb/test/rrc/CMakeLists.txt",
+			"lib/src/asn1/CMakeLists.txt",
+			"lib/src/common/CMakeLists.txt",
+			"srsenb/src/CMakeLists.txt",
+			"lib/src/phy/CMakeLists.txt",
+			"CMakeLists.txt",
+			"srsenb/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 33,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 34,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 22,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 56,
+				"parent" : 4
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 63,
+				"parent" : 6
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 37,
+				"parent" : 8
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 61,
+				"parent" : 10
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 5,
+				"line" : 133,
+				"parent" : 12
+			},
+			{
+				"command" : 2,
+				"file" : 5,
+				"line" : 257,
+				"parent" : 12
+			},
+			{
+				"command" : 2,
+				"file" : 5,
+				"line" : 321,
+				"parent" : 12
+			},
+			{
+				"command" : 3,
+				"file" : 5,
+				"line" : 648,
+				"parent" : 12
+			},
+			{
+				"command" : 3,
+				"file" : 5,
+				"line" : 649,
+				"parent" : 12
+			},
+			{
+				"file" : 6
+			},
+			{
+				"command" : 3,
+				"file" : 6,
+				"line" : 35,
+				"parent" : 18
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-Wno-error=template-id-cdtor -Wall -Wno-comment -Wno-reorder -Wno-unused-variable -Wtype-limits -std=c++14 -fno-strict-aliasing -Wno-unused-but-set-variable -march=native -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE -fvisibility=hidden -O3 -fno-trapping-math -fno-math-errno -DBUILD_TYPE_RELEASE -Wno-maybe-uninitialized -O3 -DNDEBUG -fPIE"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 13,
+					"define" : "ASSERTS_ENABLED"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "ENABLE_TIMEPROF"
+				},
+				{
+					"backtrace" : 15,
+					"define" : "HAVE_BACKWARD"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 16,
+					"path" : "/home/avi/wireless/srsran_4g/build/lib/include"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "/home/avi/wireless/srsran_4g/lib/include"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "/home/avi/wireless/srsran_4g"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/avi/wireless/srsran_4g/cmake/modules"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "srsran_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "asn1_utils::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "rrc_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "s1ap_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "rrc_nr_asn1::@c7bb5f4ea0d7305d920a"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsran_common::@7806e941b10f07a3cdfe"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsran_phy::@ff75a69bd6f9fa6d3921"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srslog::@ad47f0aceb6ab6835148"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "support::@eee3a3e78be170f850bb"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "enb_cfg_parser::@63b29609aa928c190691"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsenb_common::@da81e54f9169189dcff2"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsenb_rrc::@80016dbf70a0411f7d1d"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "test_helpers::@463692c9272cd8a1e9b8"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "srsgnb_rrc_config_utils::@f5e0d43930f46318bbef"
+		}
+	],
+	"id" : "rrc_paging_test::@463692c9272cd8a1e9b8",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wno-error=template-id-cdtor -Wall -Wno-comment -Wno-reorder -Wno-unused-variable -Wtype-limits -std=c++14 -fno-strict-aliasing -Wno-unused-but-set-variable -march=native -mfpmath=sse -mavx2 -DLV_HAVE_AVX2 -DLV_HAVE_AVX -DLV_HAVE_SSE -fvisibility=hidden -O3 -fno-trapping-math -fno-math-errno -DBUILD_TYPE_RELEASE -Wno-maybe-uninitialized -O3 -DNDEBUG",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "../../../lib/src/asn1/libsrsran_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "libtest_helpers.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../src/stack/rrc/libsrsenb_rrc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../src/common/libsrsenb_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../../lib/src/asn1/librrc_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../../lib/src/asn1/librrc_nr_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../../lib/src/asn1/libs1ap_asn1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "../../../lib/src/asn1/libasn1_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../src/libenb_cfg_parser.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "../../../lib/src/common/libsrsran_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "../../../lib/src/support/libsupport.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "../../../lib/src/srslog/libsrslog.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "/lib64/libmbedcrypto.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "/usr/lib64/libdw.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "/usr/lib64/libsctp.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "../../../srsgnb/src/stack/rrc/libsrsgnb_rrc_config_utils.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "../../../lib/src/phy/libsrsran_phy.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-lpthread",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-lm",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "/usr/lib64/libfftw3f.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/usr/lib64/libconfig++.so",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "rrc_paging_test",
+	"nameOnDisk" : "rrc_paging_test",
+	"paths" : 
+	{
+		"build" : "srsenb/test/rrc",
+		"source" : "srsenb/test/rrc"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "srsenb/test/rrc/rrc_paging_test.cc",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

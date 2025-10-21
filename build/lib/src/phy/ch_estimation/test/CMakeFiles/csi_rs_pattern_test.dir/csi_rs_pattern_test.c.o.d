@@ -1,0 +1,48 @@
+lib/src/phy/ch_estimation/test/CMakeFiles/csi_rs_pattern_test.dir/csi_rs_pattern_test.c.o: \
+ /home/avi/wireless/srsran_4g/lib/src/phy/ch_estimation/test/csi_rs_pattern_test.c \
+ /usr/include/stdc-predef.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/ch_estimation/csi_rs.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/ch_estimation/csi_rs_cfg.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/config.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/common/phy_common_nr.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/common/phy_common.h \
+ /usr/include/math.h /usr/include/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/features-time64.h \
+ /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
+ /usr/include/sys/cdefs.h /usr/include/bits/long-double.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/bits/time64.h /usr/include/bits/math-vector.h \
+ /usr/include/bits/libm-simd-decl-stubs.h /usr/include/bits/floatn.h \
+ /usr/include/bits/floatn-common.h /usr/include/bits/flt-eval-method.h \
+ /usr/include/bits/fp-logb.h /usr/include/bits/fp-fast.h \
+ /usr/include/bits/mathcalls-macros.h \
+ /usr/include/bits/mathcalls-helper-functions.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathcalls-narrow.h \
+ /usr/include/bits/iscanonical.h \
+ /usr/lib/gcc/x86_64-redhat-linux/15/include/stdbool.h \
+ /usr/lib/gcc/x86_64-redhat-linux/15/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
+ /usr/include/bits/stdint-least.h /usr/include/stdio.h \
+ /usr/lib/gcc/x86_64-redhat-linux/15/include/stddef.h \
+ /usr/lib/gcc/x86_64-redhat-linux/15/include/stdarg.h \
+ /usr/include/bits/types/__fpos_t.h /usr/include/bits/types/__mbstate_t.h \
+ /usr/include/bits/types/__fpos64_t.h /usr/include/bits/types/__FILE.h \
+ /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
+ /usr/include/bits/types/cookie_io_functions_t.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/stdio.h \
+ /usr/include/inttypes.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/phch/phch_cfg_nr.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/ch_estimation/csi_rs_cfg.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/phch/sch_cfg_nr.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/fec/softbuffer.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/phch/uci_cfg_nr.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/phch/csi_cfg.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/phch/pucch_cfg_nr.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/phch/harq_ack_cfg.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/utils/re_pattern.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/phy/utils/../common/phy_common_nr.h \
+ /usr/include/complex.h /usr/include/bits/mathdef.h \
+ /usr/include/bits/cmathcalls.h \
+ /home/avi/wireless/srsran_4g/lib/include/srsran/support/srsran_test.h

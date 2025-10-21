@@ -3040,9 +3040,11 @@ void rrc::start_rrc_storming_attack()
 {
   logger.info("Starting RRC Storming Attack...");
   
-  // Attack parameters
-  const int max_attacks = 1000;  // Maximum number of attacks
-  const int attack_interval_ms = 100;  // Interval between attacks in milliseconds
+  // Attack parameters from config
+  const int max_attacks = args.rrc_storming_max_attacks;  // Maximum number of attacks
+  const int attack_interval_ms = args.rrc_storming_interval_ms;  // Interval between attacks (ms)
+  
+  logger.info("RRC Storming Attack Config: max_attacks=%d, interval_ms=%d", max_attacks, attack_interval_ms);
   
   std::random_device rd;
   std::mt19937 gen(rd());

@@ -41,6 +41,10 @@ struct rrc_args_t {
   bool                                    support_ca;
   int                                     mbms_service_id;
   uint32_t                                mbms_service_port;
+  
+  // RRC storming attack parameters
+  int                                     rrc_storming_max_attacks;
+  int                                     rrc_storming_interval_ms;
 };
 
 #define SRSRAN_UE_CATEGORY_DEFAULT "4"
