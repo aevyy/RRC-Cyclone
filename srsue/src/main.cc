@@ -694,11 +694,11 @@ static void* input_loop(void* ue_ptr)
         cout << "Sending Radio Link Failure" << endl;
       } else if (key == "fd") {
         // Trigger RRC storming attack
-        cout << "Starting RRC Storming Attack..." << endl;
+        cout << "[RRC_STORM] Starting RRC Storming Attack..." << endl;
         if (ue) {
           ue->start_rrc_storming_attack();
         } else {
-          cout << "UE not available for RRC storming attack" << endl;
+          cout << "[RRC_STORM] UE not available for RRC storming attack" << endl;
         }
       } else if (key == "flush") {
         srslog::flush();

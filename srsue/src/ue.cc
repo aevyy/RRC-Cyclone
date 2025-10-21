@@ -416,7 +416,7 @@ std::string ue::get_build_string()
 
 void ue::start_rrc_storming_attack()
 {
-  logger.info("Starting RRC Storming Attack...");
+  logger.info("[RRC_STORM] Starting RRC Storming Attack...");
   
   // Access the RRC layer through the stack
   if (stack) {
@@ -425,10 +425,10 @@ void ue::start_rrc_storming_attack()
     if (lte_stack) {
       lte_stack->start_rrc_storming_attack();
     } else {
-      logger.error("Failed to access LTE stack for RRC storming attack");
+      logger.error("[RRC_STORM] Failed to access LTE stack for RRC storming attack");
     }
   } else {
-    logger.error("Stack not available for RRC storming attack");
+    logger.error("[RRC_STORM] Stack not available for RRC storming attack");
   }
 }
 
