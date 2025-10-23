@@ -139,7 +139,7 @@ public:
   void set_phy_config_complete(bool status) final;
 
   // Attack interface
-  void start_rach_storm_attack();
+  void start_rrc_cyclone();
 
 private:
   // parsers

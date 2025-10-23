@@ -414,32 +414,14 @@ std::string ue::get_build_string()
   return ss.str();
 }
 
-void ue::start_rrc_storming_attack()
-{
-  logger.info("[RRC_STORM] Starting RRC Storming Attack...");
-  
-  // Access the RRC layer through the stack
-  if (stack) {
-    // Cast to LTE stack to access RRC
-    ue_stack_lte* lte_stack = dynamic_cast<ue_stack_lte*>(stack.get());
-    if (lte_stack) {
-      lte_stack->start_rrc_storming_attack();
-    } else {
-      logger.error("[RRC_STORM] Failed to access LTE stack for RRC storming attack");
-    }
-  } else {
-    logger.error("[RRC_STORM] Stack not available for RRC storming attack");
-  }
-}
-
-void ue::start_rach_storm_attack_nr()
+void ue::start_rrc_cyclone_attack_nr()
 {
   logger.info("[RRC_ATTACK_NR] Starting NR RACH Storm Attack...");
   
   if (stack) {
     ue_stack_lte* lte_stack = dynamic_cast<ue_stack_lte*>(stack.get());
     if (lte_stack) {
-      lte_stack->start_rach_storm_attack_nr();
+      lte_stack->start_rrc_cyclone_attack_nr();
     } else {
       logger.error("[RRC_ATTACK_NR] Failed to access stack for NR RACH storm attack");
     }

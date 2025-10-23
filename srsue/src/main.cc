@@ -153,8 +153,6 @@ static int parse_args(all_args_t* args, int argc, char* argv[])
     ("rrc.nr_measurement_pci",  bpo::value<uint32_t>(&args->stack.rrc_nr.sim_nr_meas_pci)->default_value(500),                    "NR PCI for the simulated NR measurement")
     ("rrc.nr_short_sn_support", bpo::value<bool>(&args->stack.rrc_nr.pdcp_short_sn_support)->default_value(true),                 "Announce PDCP short SN support")
     
-    ("rrc_storming.max_attacks", bpo::value<int>(&args->stack.rrc.rrc_storming_max_attacks)->default_value(1000),                  "Maximum number of RRC storming attacks")
-    ("rrc_storming.attack_interval_ms", bpo::value<int>(&args->stack.rrc.rrc_storming_interval_ms)->default_value(100),            "Interval between RRC storming attacks in milliseconds")
     ("rrc_storming_nr.max_attacks", bpo::value<int>(&args->stack.rrc_nr.rrc_storming_max_attacks)->default_value(1000),           "Maximum number of NR RRC storming attacks")
     ("rrc_storming_nr.attack_interval_ms", bpo::value<int>(&args->stack.rrc_nr.rrc_storming_interval_ms)->default_value(100),     "Interval between NR RRC storming attacks in milliseconds")
 
@@ -695,20 +693,12 @@ static void* input_loop(void* ue_ptr)
         simulate_rlf.store(true, std::memory_order_relaxed);
         cout << "Sending Radio Link Failure" << endl;
       } else if (key == "fd") {
-        // Trigger RRC storming attack
-        cout << "[RRC_STORM] Starting RRC Storming Attack..." << endl;
+        // Trigger NR RRC-Cyclone attack
+        cout << "[RRC_CYCLONE_NR] Starting NR RRC-Cyclone Attack..." << endl;
         if (ue) {
-          ue->start_rrc_storming_attack();
+          ue->start_rrc_cyclone_attack_nr();
         } else {
-          cout << "[RRC_STORM] UE not available for RRC storming attack" << endl;
-        }
-      } else if (key == "nr") {
-        // Trigger NR RACH storm attack
-        cout << "[RRC_ATTACK_NR] Starting NR RACH Storm Attack..." << endl;
-        if (ue) {
-          ue->start_rach_storm_attack_nr();
-        } else {
-          cout << "[RRC_ATTACK_NR] UE not available for NR RACH storm attack" << endl;
+          cout << "[RRC_CYCLONE_NR] UE not available for NR RRC-Cyclone attack" << endl;
         }
       } else if (key == "flush") {
         srslog::flush();
