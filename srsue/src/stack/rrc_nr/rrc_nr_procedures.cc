@@ -223,6 +223,7 @@ proc_outcome_t rrc_nr::setup_request_proc::step()
 {
   if (state == state_t::cell_selection) {
     // NOTE: cell selection will signal back with an event trigger
+    logger.debug("[PROC_DEBUG] setup_request_proc::step() - state=cell_selection, yielding");
     return proc_outcome_t::yield;
   }
 
@@ -254,16 +255,25 @@ proc_outcome_t rrc_nr::setup_request_proc::step()
 
   } else if (state == state_t::wait_t300) {
     // Wait until t300 stops due to RRCConnectionSetup/Reject or expiry
-    if (rrc_handle.t300.is_running()) {
+    bool t300_running = rrc_handle.t300.is_running();
+    bool is_connected = (rrc_handle.state == RRC_NR_STATE_CONNECTED);
+    
+    logger.debug("[PROC_DEBUG] setup_request_proc::step() - state=wait_t300, t300_running=%s, is_connected=%s",
+                 t300_running ? "true" : "false",
+                 is_connected ? "true" : "false");
+    
+    if (t300_running) {
       return proc_outcome_t::yield;
     }
 
-    if (rrc_handle.state == RRC_NR_STATE_CONNECTED) {
+    if (is_connected) {
       // Received ConnectionSetup
+      logger.info("[PROC_DEBUG] setup_request_proc completing with SUCCESS");
       return proc_outcome_t::success;
     }
   }
 
+  logger.info("[PROC_DEBUG] setup_request_proc completing with ERROR (state=%d)", (int)state);
   return proc_outcome_t::error;
 }
 

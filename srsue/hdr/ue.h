@@ -113,6 +113,7 @@ public:
   
   // RRC storming attack
   void start_rrc_storming_attack();
+  void start_rach_storm_attack_nr();
 
 private:
   // UE consists of a radio, a PHY and a stack element

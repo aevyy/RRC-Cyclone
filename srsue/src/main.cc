@@ -155,6 +155,8 @@ static int parse_args(all_args_t* args, int argc, char* argv[])
     
     ("rrc_storming.max_attacks", bpo::value<int>(&args->stack.rrc.rrc_storming_max_attacks)->default_value(1000),                  "Maximum number of RRC storming attacks")
     ("rrc_storming.attack_interval_ms", bpo::value<int>(&args->stack.rrc.rrc_storming_interval_ms)->default_value(100),            "Interval between RRC storming attacks in milliseconds")
+    ("rrc_storming_nr.max_attacks", bpo::value<int>(&args->stack.rrc_nr.rrc_storming_max_attacks)->default_value(1000),           "Maximum number of NR RRC storming attacks")
+    ("rrc_storming_nr.attack_interval_ms", bpo::value<int>(&args->stack.rrc_nr.rrc_storming_interval_ms)->default_value(100),     "Interval between NR RRC storming attacks in milliseconds")
 
     ("nas.apn",               bpo::value<string>(&args->stack.nas.apn_name)->default_value(""),          "Set Access Point Name (APN) for data services")
     ("nas.apn_protocol",      bpo::value<string>(&args->stack.nas.apn_protocol)->default_value(""),  "Set Access Point Name (APN) protocol for data services")
@@ -699,6 +701,14 @@ static void* input_loop(void* ue_ptr)
           ue->start_rrc_storming_attack();
         } else {
           cout << "[RRC_STORM] UE not available for RRC storming attack" << endl;
+        }
+      } else if (key == "nr") {
+        // Trigger NR RACH storm attack
+        cout << "[RRC_ATTACK_NR] Starting NR RACH Storm Attack..." << endl;
+        if (ue) {
+          ue->start_rach_storm_attack_nr();
+        } else {
+          cout << "[RRC_ATTACK_NR] UE not available for NR RACH storm attack" << endl;
         }
       } else if (key == "flush") {
         srslog::flush();

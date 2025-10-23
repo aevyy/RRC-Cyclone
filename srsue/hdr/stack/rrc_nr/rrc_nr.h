@@ -138,6 +138,9 @@ public:
   void cell_select_completed(const cell_select_result_t& result) final;
   void set_phy_config_complete(bool status) final;
 
+  // Attack interface
+  void start_rach_storm_attack();
+
 private:
   // parsers
   void decode_pdu_bcch_dlsch(srsran::unique_byte_buffer_t pdu);
