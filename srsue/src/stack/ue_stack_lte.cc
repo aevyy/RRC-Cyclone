@@ -562,13 +562,12 @@ void ue_stack_lte::cell_select_completed(const rrc_interface_phy_nr::cell_select
   cfg_task_queue.push([this, result]() { rrc_nr.cell_select_completed(result); });
 }
 
-void ue_stack_lte::start_rrc_storming_attack()
+void ue_stack_lte::start_rrc_cyclone_attack_nr()
 {
-  stack_logger.info("[RRC_STORM] Starting RRC Storming Attack...");
+  stack_logger.info("[RRC_ATTACK_NR] Starting NR RACH Storm Attack...");
   
-  // Start the attack in a separate thread to avoid blocking the main thread
   std::thread attack_thread([this]() {
-    rrc.start_rrc_storming_attack();
+    rrc_nr.start_rrc_cyclone();
   });
   attack_thread.detach();
 }

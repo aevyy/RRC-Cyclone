@@ -141,7 +141,6 @@ public:
   bool srbs_flushed(); //< Check if data on SRBs still needs to be sent
   
   // RRC storming attack
-  void start_rrc_storming_attack();
 
 protected:
   // Moved to protected to be accessible by unit tests
