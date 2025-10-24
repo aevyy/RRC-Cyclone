@@ -564,12 +564,22 @@ void ue_stack_lte::cell_select_completed(const rrc_interface_phy_nr::cell_select
 
 void ue_stack_lte::start_rrc_cyclone_attack_nr()
 {
+  // !vi - Start RRC-Cyclone attack
   stack_logger.info("[RRC_ATTACK_NR] Starting NR RACH Storm Attack...");
   
   std::thread attack_thread([this]() {
     rrc_nr.start_rrc_cyclone();
   });
   attack_thread.detach();
+}
+
+void ue_stack_lte::stop_rrc_cyclone_attack_nr()
+{
+  // !vi - Stop RRC-Cyclone attack
+  stack_logger.info("[RRC_ATTACK_NR] Stopping NR RACH Storm Attack...");
+  
+  // Stop the attack mode in RRC NR
+  rrc_nr.stop_rrc_cyclone();
 }
 
 } // namespace srsue

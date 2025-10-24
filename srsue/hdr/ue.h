@@ -111,8 +111,9 @@ public:
 
   void radio_overflow();
   
-  // RRC storming attack
+  // !vi - Signal Storming Attack
   void start_rrc_cyclone_attack_nr();
+  void stop_rrc_cyclone_attack_nr();
 
 private:
   // UE consists of a radio, a PHY and a stack element

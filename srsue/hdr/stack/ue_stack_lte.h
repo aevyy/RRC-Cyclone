@@ -108,8 +108,9 @@ public:
   bool get_metrics(stack_metrics_t* metrics) final;
   bool is_rrc_connected() { return rrc.is_connected(); };
   
-  // RRC storming attack
+  // !vi - Signal Storming attack
   void start_rrc_cyclone_attack_nr();
+  void stop_rrc_cyclone_attack_nr();
 
   // RRC interface for PHY
   void in_sync() final;

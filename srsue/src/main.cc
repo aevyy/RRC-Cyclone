@@ -693,12 +693,20 @@ static void* input_loop(void* ue_ptr)
         simulate_rlf.store(true, std::memory_order_relaxed);
         cout << "Sending Radio Link Failure" << endl;
       } else if (key == "fd") {
-        // Trigger NR RRC-Cyclone attack
+        // !vi - Trigger NR RRC-Cyclone attack
         cout << "[RRC_CYCLONE_NR] Starting NR RRC-Cyclone Attack..." << endl;
         if (ue) {
           ue->start_rrc_cyclone_attack_nr();
         } else {
           cout << "[RRC_CYCLONE_NR] UE not available for NR RRC-Cyclone attack" << endl;
+        }
+      } else if (key == "fs") {
+        // !vi - Stop NR RRC-Cyclone attack
+        cout << "[RRC_CYCLONE_NR] Stopping NR RRC-Cyclone Attack..." << endl;
+        if (ue) {
+          ue->stop_rrc_cyclone_attack_nr();
+        } else {
+          cout << "[RRC_CYCLONE_NR] UE not available for stopping NR RRC-Cyclone attack" << endl;
         }
       } else if (key == "flush") {
         srslog::flush();
